@@ -70,9 +70,10 @@ end
 
 % Forward Propagation
 A1 = [ones(m, 1), X];
-Z1 = sigmoid(A1 * Theta1');
-A2 = [ones(m, 1), Z1];
-A3 = sigmoid(A2 * Theta2');
+Z2 = A1 * Theta1';
+A2 = [ones(m, 1), sigmoid(Z2)];
+Z3 = A2 * Theta2';
+A3 = sigmoid(Z3);
 
 % Calculate Cost Function (Loss Function)
 FilterTheta1 = Theta1(:, 2:end);
@@ -82,15 +83,10 @@ J = -1/m * sum(Y .* log(A3) + (1 - Y) .* log(1 - A3), 'all') ...
 
 % Calculate backpropagation
 Delta3 = A3 - Y;
-Delta2 = (Delta3 * Theta2(:, 2:end)).*sigmoidGradient(Z1);
+TempDelta = Delta3 * Theta2;
+Delta2 = TempDelta(:, 2:end).*sigmoidGradient(Z2);
 Theta2_grad = (Delta3' * A2 + lambda * [zeros(num_labels, 1), FilterTheta2]) ./ m;
 Theta1_grad = (Delta2' * A1 + lambda * [zeros(hidden_layer_size, 1), FilterTheta1]) ./ m;
-
-
-
-
-
-
 
 % -------------------------------------------------------------
 
